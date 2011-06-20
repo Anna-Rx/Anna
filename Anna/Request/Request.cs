@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
@@ -17,5 +18,14 @@ namespace Anna.Request
         }
 
         public Uri Url { get; set; }
+
+        internal void LoadArguments(NameValueCollection nameValueCollection)
+        {
+
+
+            UriArguments = new ArgumentsDynamic(nameValueCollection);
+        }
+
+        public dynamic UriArguments { get; private set; }
     }
 }

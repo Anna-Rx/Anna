@@ -48,14 +48,5 @@ namespace Anna.Request
             response.WriteStream(listenerResponse.OutputStream)
                     .Subscribe(s => s.Close());
         }
-
-        public void LoadArguments(NameValueCollection nameValueCollection)
-        {
-            
-
-            Parameters = new ArgumentsDynamic(nameValueCollection);
-        }
-
-        public dynamic Parameters { get; private set; }
     }
 }

@@ -28,10 +28,9 @@ namespace Anna
         private IObservable<RequestContext> ObservableHttpContext()
         {
             var observableHttpContext = Observable.Create<RequestContext>(obs =>
-                                                                          Observable.FromAsyncPattern<HttpListenerContext>(listener.BeginGetContext, 
-                                                                                                                           listener.EndGetContext)()
-                                                                              .Select(c => new RequestContext(c.Request, c.Response))
-                                                                              .Subscribe(obs))
+                Observable.FromAsyncPattern<HttpListenerContext>(listener.BeginGetContext, listener.EndGetContext)()
+                          .Select(c => new RequestContext(c.Request, c.Response))
+                          .Subscribe(obs))
                 .Repeat().Retry()
                 .Publish().RefCount();
 
@@ -107,7 +106,7 @@ namespace Anna
             var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), ctx.Request.Url);
             if (uriTemplateMatch == null) return;
 
-            ctx.LoadArguments(uriTemplateMatch.BoundVariables);
+            ctx.Request.LoadArguments(uriTemplateMatch.BoundVariables);
             obs.OnNext(ctx);
         }
     }

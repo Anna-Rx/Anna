@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Reactive.Linq;
 using Anna.Tests.Util;
 using NUnit.Framework;
 using SharpTestsEx;
@@ -57,7 +56,7 @@ namespace Anna.Tests
             using (var server = new HttpServer("http://*:1234/"))
             {
                 server.GET("customer/{name}")
-                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
+                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Request.UriArguments.name)));
 
                 Browser.ExecuteGet("http://localhost:1234/customer/peter")
                     .ReadAllContent()
@@ -71,7 +70,7 @@ namespace Anna.Tests
             using (var server = new HttpServer("http://*:1234/"))
             {
                 server.GET("customer/{name}")
-                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
+                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Request.UriArguments.name)));
 
                 Executing.This(() => Browser.ExecuteGet("http://localhost:1234/customersssss/peter"))
                     .Should().Throw<WebException>()
@@ -85,7 +84,7 @@ namespace Anna.Tests
             using (var server = new HttpServer("http://*:1234/"))
             {
                 server.RAW("customer/{name}")
-                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
+                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Request.UriArguments.name)));
 
                 Browser.ExecuteGet("http://localhost:1234/customer/peter")
                     .ReadAllContent().Should().Be.EqualTo("hello peter");
