@@ -11,4 +11,4 @@ obj
 *.userprefs
 
 _ReSharper*
-packages*
+packages/*
