@@ -35,7 +35,34 @@ namespace Anna.Tests
                     .Should().Be.EqualTo(HttpStatusCode.Created);
             }
         }
-        
+
+        [Test]
+        public void CanHandleUriArguments()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.GET("customer/{name}")
+                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Request.UriArguments.name)));
+
+                Browser.ExecuteGet("http://localhost:1234/customer/peter")
+                    .ReadAllContent()
+                    .Should().Be.EqualTo("hello peter");
+            }
+        }
+
+        [Test]
+        public void CanHandleQueryStringArguments()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.GET("customers")
+                    .Subscribe(ctx => ctx.Respond(string.Format("customers where name equals to {0}", ctx.Request.QueryString.Name)));
+
+                Browser.ExecuteGet("http://localhost:1234/customers?name=jose")
+                    .ReadAllContent().Should().Be.EqualTo("customers where name equals to jose");
+            }
+        }
+
         [Test]
         public void WhenRequestingAnUnhandledRoute_ThenReturn404()
         {
@@ -79,19 +106,6 @@ namespace Anna.Tests
 
                 Browser.ExecutePost("http://localhost:1234/website/abcdeefasdasds?a=cdef")
                     .ReadAllContent().Should().Be.EqualTo("hello master of puppets!");
-            }
-        }
-
-        [Test]
-        public void CanHandleQueryArguments()
-        {
-            using (var server = new HttpServer("http://*:1234/"))
-            {
-                server.GET("customers")
-                    .Subscribe(ctx => ctx.Respond(string.Format("customers where name equals to {0}", ctx.Request.QueryString.Name)));
-
-                Browser.ExecuteGet("http://localhost:1234/customers?name=jose")
-                    .ReadAllContent().Should().Be.EqualTo("customers where name equals to jose");
             }
         }
     }
