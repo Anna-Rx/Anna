@@ -14,7 +14,7 @@ namespace Anna.Tests
         {
             using(var server = new HttpServer("http://*:1234/"))
             {
-                server.Where(ctx => ctx.Request.HttpMethod == "GET")
+                server.GET("/")
                       .Subscribe(ctx => ctx.Respond("hello world"));
                 
                 Browser.ExecuteGet("http://localhost:1234")
@@ -24,11 +24,25 @@ namespace Anna.Tests
         }
 
         [Test]
+        public void SimpleEmptyResponseShouldWork()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.POST("/")
+                    .Subscribe(ctx => ctx.Respond(201));
+
+                Browser.ExecutePost("http://localhost:1234")
+                    .StatusCode
+                    .Should().Be.EqualTo(HttpStatusCode.Created);
+            }
+        }
+
+        [Test]
         public void OnUriShouldWork()
         {
             using (var server = new HttpServer("http://*:1234/"))
             {
-                server.OnGET().OnUri("a/b/c")
+                server.GET("a/b/c")
                       .Subscribe(ctx => ctx.Respond("hello world"));
 
                 Browser.ExecuteGet("http://localhost:1234/a/b/c")
@@ -43,7 +57,7 @@ namespace Anna.Tests
         {
             using (var server = new HttpServer("http://*:1234/"))
             {
-                server.OnGET("customer/{name}")
+                server.GET("customer/{name}")
                       .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
 
                 Browser.ExecuteGet("http://localhost:1234/customer/peter")
@@ -52,18 +66,18 @@ namespace Anna.Tests
             }
         }
 
-        [Test]
-        public void SimpleEmptyResponseShouldWork()
-        {
-            using (var server = new HttpServer("http://*:1234/"))
-            {
-                server.Where(ctx => ctx.Request.HttpMethod == "POST")
-                      .Subscribe(ctx => ctx.Respond(201));
+        //[Test]
+        //public void PutShouldWork()
+        //{
+        //    using (var server = new HttpServer("http://*:1234/"))
+        //    {
+        //        server.PUT("customer/{name}")
+        //              .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
 
-                Browser.ExecutePost("http://localhost:1234")
-                    .StatusCode
-                    .Should().Be.EqualTo(HttpStatusCode.Created);
-            }
-        }
+        //        Browser.ExecuteGet("http://localhost:1234/customer/peter")
+        //            .ReadAllContent()
+        //            .Should().Be.EqualTo("hello peter");
+        //    }
+        //}
     }
 }

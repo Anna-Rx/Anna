@@ -1,10 +1,11 @@
 using System;
 using System.Net;
 using System.Reactive.Linq;
+using Anna.Request;
 
 namespace Anna
 {
-    public class HttpServer : IObservable<RequestContext>, IDisposable
+    public class HttpServer : IDisposable
     {
         private readonly HttpListener listener;
         private readonly IObservable<RequestContext> stream;
@@ -27,44 +28,73 @@ namespace Anna
                              .Repeat().Retry()
                              .Publish().RefCount();
         }
+
+
+
         public void Dispose()
         {
             listener.Stop();
         }
 
-        public IDisposable Subscribe(IObserver<RequestContext> observer)
+        public IObservable<RequestContext> GET(string uri)
         {
-            return stream.Subscribe(observer);
+            return OnUriAndMethod(uri, "GET");
         }
 
-
-    }
-
-    public static class  HttpServerExtensions
-    {
-        public static IObservable<RequestContext> OnGET(this IObservable<RequestContext> context)
+        public IObservable<RequestContext> POST(string uri)
         {
-            return context.Where(ctx => ctx.Request.HttpMethod == "GET");
+            return OnUriAndMethod(uri, "POST");
         }
 
-        public static IObservable<RequestContextWithArgs> OnGET(this IObservable<RequestContext> context, string uri)
+        public IObservable<RequestContext> PUT(string uri)
         {
-            return context.Where(ctx => ctx.Request.HttpMethod == "GET").OnUri(uri);
+            return OnUriAndMethod(uri, "PUT");
         }
 
-        public static IObservable<RequestContextWithArgs> OnUri(this IObservable<RequestContext> context, string uri)
+        public IObservable<RequestContext> HEAD(string uri)
+        {
+            return OnUriAndMethod(uri, "HEAD");
+        }
+
+        public IObservable<RequestContext> OPTIONS(string uri)
+        {
+            return OnUriAndMethod(uri, "OPTIONS");
+        }
+
+        public IObservable<RequestContext> DELETE(string uri)
+        {
+            return OnUriAndMethod(uri, "DELETE");
+        }
+
+        public IObservable<RequestContext> TRACE(string uri)
+        {
+            return OnUriAndMethod(uri, "TRACE");
+        }
+
+        public IObservable<RequestContext> OnUriAndMethod(string uri, string method)
         {
             var uriTemplate = new UriTemplate(uri);
-            return Observable.Create<RequestContextWithArgs>(obs => context.Subscribe(ctx =>
-                  {
-                      var serverPath = ctx.Request.Url.AbsoluteUri
-                                .Substring(0, ctx.Request.Url.AbsoluteUri.Length - ctx.Request.Url.AbsolutePath.Length);
-                      var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), ctx.Request.Url);
-                      if (uriTemplateMatch != null)
-                      {
-                          obs.OnNext(new RequestContextWithArgs(ctx, uriTemplateMatch.BoundVariables));
-                      }
-                  }, obs.OnError, obs.OnCompleted));
+            return Observable.Create<RequestContext>(obs => 
+                stream.Subscribe(ctx => OnUriAndMethodHandler(ctx, method, uriTemplate, obs), 
+                                 obs.OnError, obs.OnCompleted));
+        }
+
+        private static void OnUriAndMethodHandler(
+                RequestContext ctx, 
+                string method, 
+                UriTemplate uriTemplate, 
+                IObserver<RequestContext> obs)
+        {
+            if (ctx.Request.HttpMethod != method) return;
+
+            var serverPath = ctx.Request.Url.AbsoluteUri
+                .Substring(0, ctx.Request.Url.AbsoluteUri.Length - ctx.Request.Url.AbsolutePath.Length);
+
+            var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), ctx.Request.Url);
+            if (uriTemplateMatch == null) return;
+
+            ctx.LoadArguments(uriTemplateMatch.BoundVariables);
+            obs.OnNext(ctx);
         }
     }
 }
