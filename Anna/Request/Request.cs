@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Web;
 
 namespace Anna.Request
 {
@@ -17,12 +18,20 @@ namespace Anna.Request
             get { return int.Parse(Headers["Content-Length"].First()); }
         }
 
-        public Uri Url { get; set; }
+        private Uri url;
+        public Uri Url
+        {
+            get { return url; }
+            set
+            {
+                url = value;
+                QueryString = new ArgumentsDynamic(HttpUtility.ParseQueryString(url.Query));
+            }
+        }
 
+        public dynamic QueryString { get; private set; }
         internal void LoadArguments(NameValueCollection nameValueCollection)
         {
-
-
             UriArguments = new ArgumentsDynamic(nameValueCollection);
         }
 

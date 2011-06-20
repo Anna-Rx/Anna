@@ -31,12 +31,7 @@ namespace Anna.Request
             // set the result parameter to the property value and return true.
             // Otherwise, return false.
             string value;
-            if (!args.TryGetValue(name, out value))
-            {
-                result = null;
-                return false;
-            }
-            result = value;
+            result = !args.TryGetValue(name, out value) ? null : value;
             return true;
         }
     }

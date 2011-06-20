@@ -37,6 +37,7 @@
       <HintPath>..\packages\Rx-Main.1.0.10605\lib\Net4\System.Reactive.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

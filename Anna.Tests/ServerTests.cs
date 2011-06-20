@@ -9,7 +9,7 @@ namespace Anna.Tests
     public class ServerTests
     {
         [Test]
-        public void SimpleStringRequestShouldWork()
+        public void CanReturnAnString()
         {
             using(var server = new HttpServer("http://*:1234/"))
             {
@@ -23,7 +23,7 @@ namespace Anna.Tests
         }
 
         [Test]
-        public void SimpleEmptyResponseShouldWork()
+        public void CanReturnAnStatusCode()
         {
             using (var server = new HttpServer("http://*:1234/"))
             {
@@ -33,34 +33,6 @@ namespace Anna.Tests
                 Browser.ExecutePost("http://localhost:1234")
                     .StatusCode
                     .Should().Be.EqualTo(HttpStatusCode.Created);
-            }
-        }
-
-        [Test]
-        public void OnUriShouldWork()
-        {
-            using (var server = new HttpServer("http://*:1234/"))
-            {
-                server.GET("a/b/c")
-                      .Subscribe(ctx => ctx.Respond("hello world"));
-
-                Browser.ExecuteGet("http://localhost:1234/a/b/c")
-                    .ReadAllContent()
-                    .Should().Be.EqualTo("hello world");
-            }
-        }
-
-        [Test]
-        public void OnUriWithArgsShouldWork()
-        {
-            using (var server = new HttpServer("http://*:1234/"))
-            {
-                server.GET("customer/{name}")
-                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Request.UriArguments.name)));
-
-                Browser.ExecuteGet("http://localhost:1234/customer/peter")
-                    .ReadAllContent()
-                    .Should().Be.EqualTo("hello peter");
             }
         }
         
@@ -107,6 +79,19 @@ namespace Anna.Tests
 
                 Browser.ExecutePost("http://localhost:1234/website/abcdeefasdasds?a=cdef")
                     .ReadAllContent().Should().Be.EqualTo("hello master of puppets!");
+            }
+        }
+
+        [Test]
+        public void CanHandleQueryArguments()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.GET("customers")
+                    .Subscribe(ctx => ctx.Respond(string.Format("customers where name equals to {0}", ctx.Request.QueryString.Name)));
+
+                Browser.ExecuteGet("http://localhost:1234/customers?name=jose")
+                    .ReadAllContent().Should().Be.EqualTo("customers where name equals to jose");
             }
         }
     }
