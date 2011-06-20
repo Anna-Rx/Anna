@@ -78,5 +78,37 @@ namespace Anna.Tests
                     .And.Exception.Response.OfType<HttpWebResponse>().StatusCode.Should().Be.EqualTo(HttpStatusCode.NotFound);
             }
         }
+
+        [Test]
+        public void WhenSubscribingToRaw_ThenIgnoreTheMethod()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.RAW("customer/{name}")
+                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
+
+                Browser.ExecuteGet("http://localhost:1234/customer/peter")
+                    .ReadAllContent().Should().Be.EqualTo("hello peter");
+                
+                Browser.ExecutePost("http://localhost:1234/customer/peter")
+                    .ReadAllContent().Should().Be.EqualTo("hello peter");
+            }
+        }
+
+        [Test]
+        public void CanSubscribeToRawInARawPath()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.RAW("website/*")
+                      .Subscribe(ctx => ctx.Respond("hello master of puppets!"));
+
+                Browser.ExecuteGet("http://localhost:1234/website/a/b/c/peter?thisQueryString=asdasdsa")
+                    .ReadAllContent().Should().Be.EqualTo("hello master of puppets!");
+
+                Browser.ExecutePost("http://localhost:1234/website/abcdeefasdasds?a=cdef")
+                    .ReadAllContent().Should().Be.EqualTo("hello master of puppets!");
+            }
+        }
     }
 }

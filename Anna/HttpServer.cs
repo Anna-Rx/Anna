@@ -4,6 +4,7 @@ using System.Net;
 using System.Reactive.Linq;
 using Anna.Observers;
 using Anna.Request;
+using Anna.Util;
 
 namespace Anna
 {
@@ -79,6 +80,11 @@ namespace Anna
             return OnUriAndMethod(uri, "TRACE");
         }
 
+        public IObservable<RequestContext> RAW(string uri)
+        {
+            return OnUriAndMethod(uri, null);
+        }
+
         public IObservable<RequestContext> OnUriAndMethod(string uri, string method)
         {
             handledRoutes.Add(new Tuple<string, string>(uri, method));
@@ -95,11 +101,9 @@ namespace Anna
                 UriTemplate uriTemplate, 
                 IObserver<RequestContext> obs)
         {
-            if (ctx.Request.HttpMethod != method) return;
+            if (!string.IsNullOrEmpty(method) && ctx.Request.HttpMethod != method) return;
 
-            var serverPath = ctx.Request.Url.AbsoluteUri
-                .Substring(0, ctx.Request.Url.AbsoluteUri.Length - ctx.Request.Url.AbsolutePath.Length);
-
+            var serverPath = ctx.Request.Url.GetServerBaseUri();
             var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), ctx.Request.Url);
             if (uriTemplateMatch == null) return;
 

@@ -55,6 +55,7 @@
     <Compile Include="Request\RequestContext.cs" />
     <Compile Include="Responses\Response.cs" />
     <Compile Include="Util\StreamExtensions.cs" />
+    <Compile Include="Util\UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

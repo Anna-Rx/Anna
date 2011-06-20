@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Anna.Request;
+using Anna.Util;
 
 namespace Anna.Observers
 {
@@ -18,11 +19,8 @@ namespace Anna.Observers
         {
             var isHandled = handledRoutes.Any(r =>
                                                   {
-                                                      if (r.Item2 != value.Request.HttpMethod) return false;
-
-                                                      var serverPath = value.Request.Url.AbsoluteUri
-                                                          .Substring(0, value.Request.Url.AbsoluteUri.Length - value.Request.Url.AbsolutePath.Length);
-                                                      
+                                                      if (!string.IsNullOrEmpty(r.Item2) && r.Item2 != value.Request.HttpMethod) return false;
+                                                      var serverPath = value.Request.Url.GetServerBaseUri();
                                                       var uriTemplate = new UriTemplate(r.Item1);
                                                       var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), value.Request.Url);
                                                       return uriTemplateMatch != null;
