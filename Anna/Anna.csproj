@@ -47,6 +47,7 @@
     <Compile Include="Request\ArgumentsDynamic.cs" />
     <Compile Include="Responses\EmptyResponse.cs" />
     <Compile Include="Responses\StringResponse.cs" />
+    <Compile Include="Observers\UnhandledRouteObserver.cs" />
     <Compile Include="Util\CollectionExtensions.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,7 +57,9 @@
     <Compile Include="Util\StreamExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

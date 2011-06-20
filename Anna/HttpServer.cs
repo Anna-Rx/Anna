@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reactive.Linq;
+using Anna.Observers;
 using Anna.Request;
 
 namespace Anna
@@ -9,6 +11,10 @@ namespace Anna
     {
         private readonly HttpListener listener;
         private readonly IObservable<RequestContext> stream;
+
+        //URI - METHOD
+        private readonly List<Tuple<string, string>> handledRoutes 
+            = new List<Tuple<string, string>>();
 
         public HttpServer(string url)
         {
@@ -20,15 +26,17 @@ namespace Anna
 
         private IObservable<RequestContext> ObservableHttpContext()
         {
-            return Observable.Create<RequestContext>(obs =>
-                                Observable.FromAsyncPattern<HttpListenerContext>(listener.BeginGetContext, 
-                                                                                 listener.EndGetContext)()
-                                          .Select(c => new RequestContext(c.Request, c.Response))
-                                          .Subscribe(obs))
-                             .Repeat().Retry()
-                             .Publish().RefCount();
-        }
+            var observableHttpContext = Observable.Create<RequestContext>(obs =>
+                                                                          Observable.FromAsyncPattern<HttpListenerContext>(listener.BeginGetContext, 
+                                                                                                                           listener.EndGetContext)()
+                                                                              .Select(c => new RequestContext(c.Request, c.Response))
+                                                                              .Subscribe(obs))
+                .Repeat().Retry()
+                .Publish().RefCount();
 
+            observableHttpContext.Subscribe(new UnhandledRouteObserver(handledRoutes));
+            return observableHttpContext;
+        }
 
 
         public void Dispose()
@@ -73,6 +81,8 @@ namespace Anna
 
         public IObservable<RequestContext> OnUriAndMethod(string uri, string method)
         {
+            handledRoutes.Add(new Tuple<string, string>(uri, method));
+
             var uriTemplate = new UriTemplate(uri);
             return Observable.Create<RequestContext>(obs => 
                 stream.Subscribe(ctx => OnUriAndMethodHandler(ctx, method, uriTemplate, obs), 

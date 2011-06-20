@@ -33,4 +33,13 @@ namespace Anna.Tests.Util
             }
         }
     }
+
+
+    public static class ObjectExtensions
+    {
+        public static T OfType<T>(this object o)
+        {
+            return (T) o;
+        }
+    }
 }

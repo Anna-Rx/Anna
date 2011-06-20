@@ -51,7 +51,6 @@ namespace Anna.Tests
             }
         }
 
-
         [Test]
         public void OnUriWithArgsShouldWork()
         {
@@ -65,19 +64,19 @@ namespace Anna.Tests
                     .Should().Be.EqualTo("hello peter");
             }
         }
+        
+        [Test]
+        public void WhenRequestingAnUnhandledRoute_ThenReturn404()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.GET("customer/{name}")
+                      .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
 
-        //[Test]
-        //public void PutShouldWork()
-        //{
-        //    using (var server = new HttpServer("http://*:1234/"))
-        //    {
-        //        server.PUT("customer/{name}")
-        //              .Subscribe(ctx => ctx.Respond(string.Format("hello {0}", ctx.Parameters.name)));
-
-        //        Browser.ExecuteGet("http://localhost:1234/customer/peter")
-        //            .ReadAllContent()
-        //            .Should().Be.EqualTo("hello peter");
-        //    }
-        //}
+                Executing.This(() => Browser.ExecuteGet("http://localhost:1234/customersssss/peter"))
+                    .Should().Throw<WebException>()
+                    .And.Exception.Response.OfType<HttpWebResponse>().StatusCode.Should().Be.EqualTo(HttpStatusCode.NotFound);
+            }
+        }
     }
 }
