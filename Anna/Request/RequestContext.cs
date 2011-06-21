@@ -41,12 +41,16 @@ namespace Anna.Request
             {
                 listenerResponse.AddHeader(header.Key, header.Value);
             }
-
+            
             listenerResponse.ContentType = response.Headers["Content-Type"];
             listenerResponse.StatusCode = response.StatusCode;
 
             response.WriteStream(listenerResponse.OutputStream)
-                    .Subscribe(s => s.Close());
+                    .Subscribe(s =>
+                                   {
+                                       s.Close();
+                                       s.Dispose();
+                                   });
         }
     }
 }
