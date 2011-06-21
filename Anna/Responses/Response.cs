@@ -9,16 +9,19 @@ namespace Anna.Responses
     {
         public Response()
         {
-            WriteStream = s => Observable.Return(s);
             StatusCode = 200;
             Headers = new Dictionary<string, string>{{"Content-Type", "text/html"}};
         }
+       
 
         public int StatusCode { get; set; }
 
         public IDictionary<string, string> Headers { get; set; }
 
-        public Func<Stream, IObservable<Stream>> WriteStream { get; set; }
+        public virtual IObservable<Stream> WriteStream(Stream s)
+        {
+            return Observable.Return(s);
+        }
 
         public static implicit operator Response(int statusCode)
         {

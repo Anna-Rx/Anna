@@ -14,10 +14,9 @@ namespace Anna.Responses
         {
             this.file = file;
             this.chunkSize = chunkSize;
-            WriteStream = Write;
         }
 
-        public IObservable<Stream> Write(Stream stream)
+        public override IObservable<Stream> WriteStream(Stream stream)
         {
             var writer = Observable.FromAsyncPattern<byte[], int, int>(stream.BeginWrite, stream.EndWrite);
             return Observable.Create<Stream>(obs => new ObservableFromFile(file, chunkSize)
