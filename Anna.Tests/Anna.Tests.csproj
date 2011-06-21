@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Observables\TextObservableFromFile.cs" />
     <Compile Include="Util\Browser.cs" />
     <Compile Include="ServerTests.cs" />
     <Compile Include="ResponsesTests.cs" />
@@ -72,6 +73,11 @@
       <Project>{4D0919C0-8FA4-480C-8629-00EB128DDEE9}</Project>
       <Name>Anna</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\example_1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

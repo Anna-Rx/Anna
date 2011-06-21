@@ -45,8 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Observables\ObservableFromFile.cs" />
     <Compile Include="Request\ArgumentsDynamic.cs" />
     <Compile Include="Responses\EmptyResponse.cs" />
+    <Compile Include="Responses\StaticFileResponse.cs" />
     <Compile Include="Responses\StringResponse.cs" />
     <Compile Include="Observers\UnhandledRouteObserver.cs" />
     <Compile Include="Util\CollectionExtensions.cs" />
