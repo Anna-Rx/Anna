@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Observables\TextObservableFromFile.cs" />
+    <Compile Include="Observables\ObservableFromFileTests.cs" />
     <Compile Include="Util\Browser.cs" />
     <Compile Include="ServerTests.cs" />
     <Compile Include="ResponsesTests.cs" />
