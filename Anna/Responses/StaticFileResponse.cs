@@ -1,28 +1,32 @@
-//using System;
-//using System.IO;
-//using System.Reactive.Linq;
-//using System.Reactive.Subjects;
-//using System.Text;
+using System;
+using System.IO;
+using System.Reactive.Linq;
+using Anna.Observables;
 
-//namespace Anna.Responses
-//{
-//    public class StaticFileResponse : Response
-//    {
-        
-//        public StaticFileResponse(string file)
-//        {
-//            WriteStream = Write;
-//        }
+namespace Anna.Responses
+{
+    public class StaticFileResponse : Response
+    {
+        private readonly string file;
+        private readonly int chunkSize;
 
-//        public IObservable<Stream> Write(Stream stream )
-//        {
-//            //var bytes = Encoding.UTF8.GetBytes(message);
-            
-//            return Observable.FromAsyncPattern<byte[], int, int>(stream.BeginWrite, stream.EndWrite)(bytes, 0, bytes.Length)
-//                .Select(u => stream);
-//        }
+        public StaticFileResponse(string file, int chunkSize = 1024)
+        {
+            this.file = file;
+            this.chunkSize = chunkSize;
+            WriteStream = Write;
+        }
 
-//    }
-
-
-//}
+        public IObservable<Stream> Write(Stream stream)
+        {
+            var writer = Observable.FromAsyncPattern<byte[], int, int>(stream.BeginWrite, stream.EndWrite);
+            return Observable.Create<Stream>(obs => new ObservableFromFile(file, chunkSize)
+                                                        .Subscribe(b => writer(b, 0, b.Length), obs.OnError,
+                                                                   () =>
+                                                                       {
+                                                                           obs.OnNext(stream);
+                                                                           obs.OnCompleted();
+                                                                       }));
+        }
+    }
+}

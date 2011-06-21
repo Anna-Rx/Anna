@@ -1,8 +1,10 @@
 using System;
 using System.Net;
+using Anna.Responses;
 using Anna.Tests.Util;
 using NUnit.Framework;
 using SharpTestsEx;
+using Enumerable = System.Linq.Enumerable;
 
 namespace Anna.Tests
 {
@@ -19,6 +21,20 @@ namespace Anna.Tests
                 Browser.ExecuteGet("http://localhost:1234")
                     .ReadAllContent()
                     .Should().Be.EqualTo("hello world");    
+            }
+        }
+        
+        [Test]
+        public void CanReturnAStaticFile()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.GET("/")
+                      .Subscribe(ctx => ctx.Respond(new StaticFileResponse(@"samples\example_1.txt")));
+
+                Browser.ExecuteGet("http://localhost:1234")
+                    .ReadAllContent()
+                    .Should().Contain(string.Join(Environment.NewLine, Enumerable.Range(1, 9)));
             }
         }
 
