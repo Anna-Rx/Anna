@@ -1,0 +1,72 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+
+	
+	<PropertyGroup>
+		<MSBuildCommunityTasksPath>.</MSBuildCommunityTasksPath>
+		<ToolsPath>Tools</ToolsPath>
+		<NUnitPath>packages\NUnit.2.5.10.11092\tools</NUnitPath>
+		<OutputPath>output</OutputPath>
+		<ReportsPath>$(OutputPath)\Reports</ReportsPath>
+		<ResultPath>$(OutputPath)\Build</ResultPath>
+	</PropertyGroup>
+	
+	
+	<Import Project="msbuildtasks\MSBuild.Community.Tasks.Targets" />
+	
+	<PropertyGroup>
+		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">0</BUILD_NUMBER>
+		<RevisionNumber>$(BUILD_NUMBER)</RevisionNumber>		
+	</PropertyGroup>
+	
+	<!--<Target Name="HgRevision">
+		<HgVersion LocalPath="." Timeout="5000">
+			<Output TaskParameter="Revision" PropertyName="RevisionNumber" />
+		</HgVersion>
+	</Target>-->
+	
+	
+	<Target Name="UpdateAssemblyInfos">
+		<Message Text="Updating version numbers to $(AssemblyVersion).$(RevisionNumber)..." />
+
+		<CreateItem Include=".\**\AssemblyInfo.cs">
+			<Output TaskParameter="Include" ItemName="AssemblyInfos"/>
+		</CreateItem>
+		
+		<FileUpdate Condition="'$(AssemblyVersion).$(RevisionNumber)' != ''"
+			Files="@(AssemblyInfos)"
+			Regex="\[\s*assembly\s*:\s*AssemblyVersion\s*\(\s*&quot;[\d\.\*]+&quot;\s*\)\s*\]"
+			ReplacementText="[assembly: AssemblyVersion(&quot;$(AssemblyVersion).$(RevisionNumber)&quot;)]" />
+		<FileUpdate Condition="'$(AssemblyVersion).$(RevisionNumber)' != ''"
+			Files="@(AssemblyInfos)"
+			Regex="\[\s*assembly\s*:\s*AssemblyFileVersion\s*\(\s*&quot;[\d\.\*]+&quot;\s*\)\s*\]"
+			ReplacementText="[assembly: AssemblyFileVersion(&quot;$(AssemblyVersion).$(RevisionNumber)&quot;)]" />
+		<FileUpdate Condition="'$(AssemblyVersion).$(RevisionNumber)' != ''"
+			Files="@(AssemblyInfos)"
+			Regex="\[\s*assembly\s*:\s*AssemblyInformationalVersion\s*\(\s*&quot;.*&quot;\s*\)\s*\]"
+			ReplacementText="[assembly: AssemblyInformationalVersion(&quot;$(AssemblyVersion).$(RevisionNumber)&quot;)]" />
+	</Target>
+	
+	<Target Name="DefaultBuild">
+		<Message Text="Building $(SolutionFile)..." />
+		<MSBuild Projects="$(SolutionFile)"
+           Properties="Configuration=$(Configuration)" 
+		   ContinueOnError="false"   />
+	</Target>
+
+	<Target Name="RunTests">
+		<Message Text="Cleaning test reports folder..." />
+		<RemoveDir Directories="$(ReportsPath)" />
+		<MakeDir Directories="$(ReportsPath)" />
+		<Exec Command="$(NUnitPath)\nunit-console.exe @(TestAssemblies) /xml=$(ReportsPath)\%(TestAssemblies.Filename).xml /framework=4.0.30319" 
+			IgnoreExitCode="true" />
+	</Target>
+	
+	<Target Name="CopyBuildResult">
+		<Message Text="Cleaning build output folder..." />
+		<RemoveDir Directories="$(ResultPath)" />
+		<MakeDir Directories="$(ResultPath)" />
+		<Message Text="xxx @(BuildResult)" />
+		<Copy SourceFiles="@(BuildResult)" DestinationFolder="$(ResultPath)" />
+	</Target>
+</Project>
