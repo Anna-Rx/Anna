@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Anna.Observers;
 using Anna.Request;
@@ -16,9 +17,11 @@ namespace Anna
         //URI - METHOD
         private readonly List<Tuple<string, string>> handledRoutes 
             = new List<Tuple<string, string>>();
+        private readonly IScheduler scheduler;
 
-        public HttpServer(string url)
+        public HttpServer(string url, IScheduler scheduler = null)
         {
+            this.scheduler = scheduler ?? new EventLoopScheduler();
             listener = new HttpListener();
             listener.Prefixes.Add(url);
             listener.Start();
@@ -32,7 +35,7 @@ namespace Anna
                           .Select(c => new RequestContext(c.Request, c.Response))
                           .Subscribe(obs))
                 .Repeat().Retry()
-                .Publish().RefCount();
+                .Publish().RefCount().ObserveOn(scheduler);
 
             observableHttpContext.Subscribe(new UnhandledRouteObserver(handledRoutes));
             return observableHttpContext;

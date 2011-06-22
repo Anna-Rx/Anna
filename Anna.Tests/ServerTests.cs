@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Anna.Responses;
 using Anna.Tests.Util;
 using NUnit.Framework;
@@ -122,6 +126,29 @@ namespace Anna.Tests
 
                 Browser.ExecutePost("http://localhost:1234/website/abcdeefasdasds?a=cdef")
                     .ReadAllContent().Should().Be.EqualTo("hello master of puppets!");
+            }
+        }
+
+
+        [Test]
+        public void UseSameThreadForAllRequests()
+        {
+            var bag = new ConcurrentBag<int>();
+
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.RAW("")
+                      .Subscribe(ctx =>
+                                     {
+                                         bag.Add(Thread.CurrentThread.ManagedThreadId);
+                                         ctx.Respond(200);
+                                     });
+                Parallel.For(1, 1000, i => Browser.ExecuteGet("http://localhost:1234/"));
+
+                bag.Distinct().Count()
+                   .Should("The default scheduler should be Event Loop, and all subscriber run in same thread")
+                   .Be.EqualTo(1);
+
             }
         }
     }
