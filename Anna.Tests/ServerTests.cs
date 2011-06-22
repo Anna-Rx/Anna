@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Anna.Responses;
 using Anna.Tests.Util;
+using Moq;
 using NUnit.Framework;
 using SharpTestsEx;
 using Enumerable = System.Linq.Enumerable;
@@ -149,6 +153,26 @@ namespace Anna.Tests
                    .Should("The default scheduler should be Event Loop, and all subscriber run in same thread")
                    .Be.EqualTo(1);
 
+            }
+        }
+
+
+        [Test]
+        public void WhenWritingToTheStreamFail_ThenTryToRespond500()
+        {
+            using(var server = new HttpServer("http://*:1234/", Scheduler.CurrentThread))
+            {
+                server.RAW("")
+                    .Subscribe(ctx =>
+                                   {
+                                       var mockedResponse = Mock.Of<Response>( r => r.WriteStream(It.IsAny<Stream>()) ==
+                                                                Observable.Throw<Stream>(new InvalidOperationException()));
+
+                                       ctx.Respond(mockedResponse);
+                                   });
+
+                Executing.This(() => Browser.ExecuteGet("http://localhost:1234/"))
+                    .Should().Throw<WebException>();
             }
         }
     }

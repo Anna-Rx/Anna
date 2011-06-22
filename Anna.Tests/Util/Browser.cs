@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net;
 
@@ -11,6 +12,15 @@ namespace Anna.Tests.Util
             request.Method = "GET";
             request.ContentLength = 0;
             return (HttpWebResponse) request.GetResponse();
+        }
+
+        public static Action CancelableGet(string url)
+        {
+            var request = WebRequest.Create(url);
+            request.Method = "GET";
+            request.ContentLength = 0;
+            var asynctask = request.BeginGetResponse(r => {}, null);
+            return () => asynctask.AsyncWaitHandle.Close();
         }
 
         public static HttpWebResponse ExecutePost(string url)
