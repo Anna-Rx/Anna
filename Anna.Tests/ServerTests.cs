@@ -31,6 +31,20 @@ namespace Anna.Tests
                     .Should().Be.EqualTo("hello world");    
             }
         }
+
+        [Test]
+        public void CanReturnAStringFromWildcardURL()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.GET("/hello/{Name}")
+                      .Subscribe(ctx => ctx.Respond("hello, " + ctx.Request.UriArguments.Name + "!"));
+
+                Browser.ExecuteGet("http://localhost:1234/hello/George")
+                    .ReadAllContent()
+                    .Should().Be.EqualTo("hello, George!");
+            }
+        }
         
         [Test]
         public void CanReturnAStaticFile()
