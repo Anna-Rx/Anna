@@ -9,11 +9,11 @@ namespace Anna.Request
 {
     public class RequestContext
     {
-        private readonly HttpListenerResponse listenerResponse;
+        public readonly HttpListenerResponse ListenerResponse;
 
         public RequestContext(HttpListenerRequest request, HttpListenerResponse response)
         {
-            listenerResponse = response;
+            ListenerResponse = response;
             Request = MapRequest(request);
         }
 
@@ -35,30 +35,34 @@ namespace Anna.Request
 
         public virtual Request Request { get; private set; }
 
-        public virtual void Respond(Response response)
+        public virtual EmptyResponse Response(int statusCode = 204)
         {
-            
-            foreach (var header in response.Headers.Where(r => r.Key != "Content-Type"))
-            {
-                listenerResponse.AddHeader(header.Key, header.Value);
-            }
-            
-            listenerResponse.ContentType = response.Headers["Content-Type"];
-            listenerResponse.StatusCode = response.StatusCode;
-            response.WriteStream(listenerResponse.OutputStream)
-                        .Subscribe(s =>
-                        {
-                            s.Close();
-                            s.Dispose();
-                        }, e =>
-                               {
-                                   try
-                                   {
-                                       listenerResponse.StatusCode = 500;
-                                       listenerResponse.OutputStream.Close();
-                                   }catch{} //swallow exceptions
-                               });    
-            
+            return new EmptyResponse(this, statusCode);
         }
+
+        public virtual StringResponse Response(string body, int statusCode = 204)
+        {
+            return new StringResponse(this, body);
+        }
+
+        public virtual StaticFileResponse StaticFileResponse(string fileName, int chunkSize = 1024)
+        {
+            return new StaticFileResponse(this, fileName, chunkSize);
+        }
+
+        public virtual void Respond(int statusCode = 204)
+        {
+            Response(statusCode).Send();
+        }
+
+        public virtual void Respond(string body, int statusCode = 204)
+        {
+            Response(body, statusCode).Send();
+        }
+
+        //public virtual void Respond(Response response)
+        //{
+        //    response.Send();
+        //}
     }
 }

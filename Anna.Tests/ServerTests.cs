@@ -38,7 +38,8 @@ namespace Anna.Tests
             using (var server = new HttpServer("http://*:1234/"))
             {
                 server.GET("/")
-                      .Subscribe(ctx => ctx.Respond(new StaticFileResponse(@"samples\example_1.txt")));
+                      //.Subscribe(ctx => ctx.Respond(new StaticFileResponse(@"samples\example_1.txt")));
+                      .Subscribe(ctx => ctx.StaticFileResponse(@"samples\example_1.txt").Send());
 
                 Browser.ExecuteGet("http://localhost:1234")
                     .ReadAllContent()
@@ -168,7 +169,8 @@ namespace Anna.Tests
                                        var mockedResponse = Mock.Of<Response>( r => r.WriteStream(It.IsAny<Stream>()) ==
                                                                 Observable.Throw<Stream>(new InvalidOperationException()));
 
-                                       ctx.Respond(mockedResponse);
+                                       mockedResponse.Send();
+                                       //ctx.Respond(mockedResponse);
                                    });
 
                 Executing.This(() => Browser.ExecuteGet("http://localhost:1234/"))

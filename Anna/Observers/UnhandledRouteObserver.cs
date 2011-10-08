@@ -28,7 +28,7 @@ namespace Anna.Observers
 
             if (isHandled) return;
 
-            value.Respond(404);
+            value.Response(404).Send();
         }
 
         public void OnError(Exception error)
