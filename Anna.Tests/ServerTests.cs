@@ -48,6 +48,36 @@ namespace Anna.Tests
                 for (int i = 0; i != data.Length; i++) data[i].Should().Be.EqualTo(expectedResponse[i]);
             }
         }
+
+        [Test]
+        public void CanDecodeARequestBody()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                string requestBody = "There's no business like \u0160ovs \u4F01\u696D";
+                server.POST("/")
+                      .Subscribe(ctx =>
+                      {
+                            ctx.Request.GetBody().Subscribe(body => 
+                            { 
+                                try
+                                {
+                                    Console.WriteLine(body);
+                                    body.Should().Be.EqualTo(requestBody);
+                                } 
+                                finally 
+                                {
+                                   ctx.Respond("hi");
+                                }
+                            });
+                      });
+
+                //Browser.ExecutePost("http://posttestserver.com/post.php", requestBody)
+                Browser.ExecutePost("http://localhost:1234", requestBody)
+                    .ReadAllContent()
+                    .Should().Contain("hi");
+            }
+        }
         
         [Test]
         public void CanReturnAStaticFile()

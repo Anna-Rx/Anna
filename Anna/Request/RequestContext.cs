@@ -21,6 +21,7 @@ namespace Anna.Request
         {
             var mapRequest = new Request
                                  {
+                                     ContentEncoding = request.ContentEncoding,
                                      Headers = request.Headers.ToDictionary(),
                                      HttpMethod = request.HttpMethod,
                                      InputStream = request.InputStream,
