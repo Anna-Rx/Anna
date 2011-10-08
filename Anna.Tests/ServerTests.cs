@@ -33,6 +33,41 @@ namespace Anna.Tests
         }
 
         [Test]
+        public void ExampleCode()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                // simple basic usage, all subscriptions will run in a single event-loop
+                server.GET("/hello/{Name}")
+                      .Subscribe(ctx => ctx.Respond("Hello, " + ctx.Request.UriArguments.Name + "!"));
+
+                Browser.ExecuteGet("http://localhost:1234/hello/George")
+                    .ReadAllContent()
+                    .Should().Be.EqualTo("Hello, George!");
+
+                // use Rx LINQ operators
+                server.POST("/hi/{Name}")
+                      .Where(ctx => ctx.Request.UriArguments.Name == "George")
+                      .Subscribe(ctx => ctx.Respond("Hi, George!"));
+
+                server.POST("/hi/{Name}")
+                      .Where(ctx => ctx.Request.UriArguments.Name == "Pete")
+                      .Subscribe(ctx => ctx.Respond("Hi, Pete!"));
+
+                Browser.ExecutePost("http://localhost:1234/hi/George")
+                     .ReadAllContent()
+                     .Should().Be.EqualTo("Hi, George!");
+
+                Browser.ExecutePost("http://localhost:1234/hi/Pete")
+                     .ReadAllContent()
+                     .Should().Be.EqualTo("Hi, Pete!");
+
+                // This becomes a problem:
+                //Browser.ExecutePost("http://localhost:1234/hi/Fran").StatusCode.Should().Be.EqualTo(404);
+            }
+        }
+
+        [Test]
         public void CanReturnBinaryData()
         {
             using (var server = new HttpServer("http://*:1234/"))
