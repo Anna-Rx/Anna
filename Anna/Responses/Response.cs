@@ -12,9 +12,9 @@ namespace Anna.Responses
     {
         private readonly HttpListenerResponse listenerResponse;
 
-        public Response(RequestContext context)
+        public Response(RequestContext context, int statusCode = 200)
         {
-            StatusCode = 200;
+            StatusCode = statusCode;
             Headers = new Dictionary<string, string>{{"Content-Type", "text/html"}};
             this.listenerResponse = context.ListenerResponse;
         }

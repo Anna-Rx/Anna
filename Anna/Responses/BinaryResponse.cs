@@ -9,7 +9,8 @@ namespace Anna.Responses
     {
         private readonly byte[] binary;
 
-        public BinaryResponse(RequestContext context, byte[] binary) : base(context)
+        public BinaryResponse(RequestContext context, byte[] binary, int statusCode = 200)
+            : base(context, statusCode)
         {
             this.binary = binary;
         }

@@ -31,6 +31,23 @@ namespace Anna.Tests
                     .Should().Be.EqualTo("hello world");    
             }
         }
+
+        [Test]
+        public void CanReturnBinaryData()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                var expectedResponse = new byte[] { 0, 1, 2, 3, 4};
+                server.GET("/")
+                      .Subscribe(ctx => ctx.Response(expectedResponse).Send());
+
+                var response = Browser.ExecuteGet("http://localhost:1234");
+                byte[] data = new BinaryReader(response.GetResponseStream()).ReadBytes(1337);
+
+                data.Length.Should().Be.EqualTo(expectedResponse.Length);
+                for (int i = 0; i != data.Length; i++) data[i].Should().Be.EqualTo(expectedResponse[i]);
+            }
+        }
         
         [Test]
         public void CanReturnAStaticFile()
@@ -38,7 +55,6 @@ namespace Anna.Tests
             using (var server = new HttpServer("http://*:1234/"))
             {
                 server.GET("/")
-                      //.Subscribe(ctx => ctx.Respond(new StaticFileResponse(@"samples\example_1.txt")));
                       .Subscribe(ctx => ctx.StaticFileResponse(@"samples\example_1.txt").Send());
 
                 Browser.ExecuteGet("http://localhost:1234")
@@ -46,6 +62,8 @@ namespace Anna.Tests
                     .Should().Contain(string.Join(Environment.NewLine, Enumerable.Range(1, 9)));
             }
         }
+
+
 
         [Test]
         public void CanReturnAnStatusCode()
