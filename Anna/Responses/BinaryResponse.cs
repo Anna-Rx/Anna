@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Linq;
+using Anna.Request;
 
 namespace Anna.Responses
 {
@@ -8,7 +9,8 @@ namespace Anna.Responses
     {
         private readonly byte[] binary;
 
-        public BinaryResponse(byte[] binary)
+        public BinaryResponse(RequestContext context, byte[] binary, int statusCode = 200)
+            : base(context, statusCode)
         {
             this.binary = binary;
         }
