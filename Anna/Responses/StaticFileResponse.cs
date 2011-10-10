@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using Anna.Observables;
+using Anna.Request;
 
 namespace Anna.Responses
 {
@@ -10,7 +11,7 @@ namespace Anna.Responses
         private readonly string file;
         private readonly int chunkSize;
 
-        public StaticFileResponse(string file, int chunkSize = 1024)
+        public StaticFileResponse(RequestContext context, string file, int chunkSize = 1024) : base(context)
         {
             this.file = file;
             this.chunkSize = chunkSize;

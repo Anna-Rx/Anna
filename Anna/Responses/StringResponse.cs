@@ -1,11 +1,12 @@
 ﻿using System.Text;
+using Anna.Request;
 
 namespace Anna.Responses
 {
     public class StringResponse : BinaryResponse
     {
-        public StringResponse(string message)
-            : base(Encoding.UTF8.GetBytes(message))
+        public StringResponse(RequestContext context, string message, int statusCode = 200)
+            : base(context, Encoding.UTF8.GetBytes(message), statusCode)
         {
         }
     }

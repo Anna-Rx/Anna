@@ -9,6 +9,9 @@ using Anna.Util;
 
 namespace Anna
 {
+    /// <summary>
+    /// The main HTTP server class. Implements IDisposable, so recommended usage is creating it in a using() statement. 
+    /// </summary>
     public class HttpServer : IDisposable
     {
         private readonly HttpListener listener;
