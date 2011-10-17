@@ -263,11 +263,10 @@ namespace Anna.Tests
                 server.RAW("")
                     .Subscribe(ctx =>
                                    {
-                                       var mockedResponse = Mock.Of<Response>( r => r.WriteStream(It.IsAny<Stream>()) ==
-                                                                Observable.Throw<Stream>(new InvalidOperationException()));
-
-                                       mockedResponse.Send();
-                                       //ctx.Respond(mockedResponse);
+                                       var mockedResponse = new Mock<Response>(ctx, 201);
+                                       mockedResponse.Setup(r => r.WriteStream(It.IsAny<Stream>()))
+                                                     .Returns(Observable.Throw<Stream>(new InvalidOperationException()));
+                                       mockedResponse.Object.Send();
                                    });
 
                 Executing.This(() => Browser.ExecuteGet("http://localhost:1234/"))
