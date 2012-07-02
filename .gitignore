@@ -14,3 +14,4 @@ _ReSharper*
 packages/*
 *.nupkg
 output/*
+Anna.Tests/Properties/AssemblyInfo.cs

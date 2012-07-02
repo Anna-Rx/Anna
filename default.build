@@ -4,7 +4,7 @@
 
 	<PropertyGroup>
 		<SolutionFile>Anna.sln</SolutionFile>
-		<AssemblyVersion>1.0.1001</AssemblyVersion>
+		<AssemblyVersion>1.0.1005</AssemblyVersion>
 	</PropertyGroup>
 	
 	<Target Name="DefineTestsAssemblies">
