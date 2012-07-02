@@ -18,7 +18,7 @@ namespace Anna.Observables
             buffer = new byte[chunkSize];
             subject = Observable.Create<byte[]>(obs =>
                                                     {
-                                                        fileStream = new FileStream(fileName, FileMode.Open);
+                                                        fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                                                         fileStream.BeginRead(buffer, 0, chunkSize,
                                                                              ar => EndReadCallback(ar, obs), null);
                                                         return () => fileStream.Close();

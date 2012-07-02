@@ -50,8 +50,19 @@ namespace Anna.Responses
             WriteStream(listenerResponse.OutputStream)
                         .Subscribe(s =>
                         {
-                            s.Close();
-                            s.Dispose();
+                            try
+                            {
+                                s.Close();
+                            }
+                            catch (HttpListenerException e)
+                            {
+                                // 1229 = client closed connection.
+                                if (e.ErrorCode != 1229) throw;
+                            }
+                            finally
+                            {
+                                s.Dispose();
+                            }
                         }, e =>
                         {
                             try
