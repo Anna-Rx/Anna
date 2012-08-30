@@ -22,3 +22,5 @@ using (var server = new HttpServer("http://*:1234/"))
           .Subscribe(ctx => ctx.Respond("Hi, Pete!"));
 }
 ```
+
+Another example is in my blog: [Long polling chat with Anna](http://joseoncode.com/2011/07/22/long-polling-chat-with-anna/)
