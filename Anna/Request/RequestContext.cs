@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using Anna.Responses;
-using AsyncHttp.Server;
 
 namespace Anna.Request
 {
@@ -14,21 +10,8 @@ namespace Anna.Request
         public RequestContext(HttpListenerRequest request, HttpListenerResponse response)
         {
             ListenerResponse = response;
-            Request = MapRequest(request);
-        }
-
-        private static Request MapRequest(HttpListenerRequest request)
-        {
-            var mapRequest = new Request
-                                 {
-                                     ContentEncoding = request.ContentEncoding,
-                                     Headers = request.Headers.ToDictionary(),
-                                     HttpMethod = request.HttpMethod,
-                                     InputStream = request.InputStream,
-                                     Url = request.Url
-                                 };
-            return mapRequest;
-        }
+            Request = new Request(request);
+        }        
 
         public virtual Request Request { get; private set; }
 
