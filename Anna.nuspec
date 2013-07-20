@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Anna</id>
-    <version>1.0.1005</version>
+    <version>1.0.1006</version>
     <authors>Jose Romaniello</authors>
     <owners>Jose Romaniello</owners>
     <projectUrl>https://github.com/jfromaniello/Anna</projectUrl>
@@ -10,7 +10,7 @@
     <description>Event-driven http library powered by Reactive Extensions. High scalability nodejs-like architecture.</description>
     <tags>HttpServer Http Web nodejs</tags>
     <dependencies>
-      <dependency id="Rx-Main" version="1.0" />
+      <dependency id="Rx-Main" version="2.1.30214.0" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Anna.dll" targetFramework=".NETFramework4.0" />
