@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Anna.Request;
@@ -28,7 +28,7 @@ namespace Anna.Observers
 
             if (isHandled) return;
 
-            value.Response(404).Send();
+            value.Response(statusCode: 404).Send();
         }
 
         public void OnError(Exception error)

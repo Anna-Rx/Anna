@@ -12,7 +12,7 @@ namespace Anna.Tests.Util
             var request = WebRequest.Create(url);
             request.Method = "GET";
             request.ContentLength = 0;
-            return (HttpWebResponse) request.GetResponse();
+            return (HttpWebResponse)request.GetResponse();
         }
 
         public static Action CancelableGet(string url)
@@ -20,7 +20,7 @@ namespace Anna.Tests.Util
             var request = WebRequest.Create(url);
             request.Method = "GET";
             request.ContentLength = 0;
-            var asynctask = request.BeginGetResponse(r => {}, null);
+            var asynctask = request.BeginGetResponse(r => { }, null);
             return () => asynctask.AsyncWaitHandle.Close();
         }
 
@@ -35,7 +35,7 @@ namespace Anna.Tests.Util
             else
             {
                 using (var requestStream = request.GetRequestStream())
-                using (var writer = new StreamWriter(requestStream,  new UTF8Encoding(false)))
+                using (var writer = new StreamWriter(requestStream, new UTF8Encoding(false)))
                 {
                     writer.Write(data);
                 }
@@ -49,7 +49,7 @@ namespace Anna.Tests.Util
     {
         public static string ReadAllContent(this WebResponse response)
         {
-            using(var streamReader = new StreamReader(response.GetResponseStream()))
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
                 return result;
@@ -57,12 +57,11 @@ namespace Anna.Tests.Util
         }
     }
 
-
     public static class ObjectExtensions
     {
         public static T OfType<T>(this object o)
         {
-            return (T) o;
+            return (T)o;
         }
     }
 }
