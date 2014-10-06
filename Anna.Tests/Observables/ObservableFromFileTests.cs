@@ -12,7 +12,6 @@ namespace Anna.Tests.Observables
     [TestFixture]
     public class ObservableFromFileTests
     {
-
         [Test]
         public void ShouldWork()
         {
@@ -26,10 +25,10 @@ namespace Anna.Tests.Observables
             }
 
             var array = bytes.SelectMany(b => b)
-                            .Skip(3) // ignore the first 3bytes
-                            .ToArray();
-            var result = Encoding.UTF8.GetString(array);
-            var expected = String.Join(Environment.NewLine, Enumerable.Range(1,9));
+                             .Skip(3) // ignore the first 3bytes
+                             .ToArray();
+            var result = Encoding.UTF8.GetString(array).Replace("\n", " ").Replace("\r\n", " ");
+            var expected = String.Join(" ", Enumerable.Range(1, 9));
             result.Should().Be.EqualTo(expected);
         }
 
@@ -46,13 +45,12 @@ namespace Anna.Tests.Observables
             }
 
             var array = bytes.SelectMany(b => b)
-                            .Skip(3) // ignore the first 3bytes
-                            .ToArray();
+                             .Skip(3) // ignore the first 3bytes
+                             .ToArray();
 
-            var result = Encoding.UTF8.GetString(array);
-            var expected = String.Join(Environment.NewLine, Enumerable.Range(1, 9));
+            var result = Encoding.UTF8.GetString(array).Replace("\n", " ").Replace("\r\n", " ");
+            var expected = String.Join(" ", Enumerable.Range(1, 9));
             result.Should().Be.EqualTo(expected);
         }
-
     }
 }
