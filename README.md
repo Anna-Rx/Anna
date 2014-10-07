@@ -1,5 +1,4 @@
-Anna
-====
+# Anna [![Build status](https://ci.appveyor.com/api/projects/status/mw9xg6c7jamxsq3c?svg=true&branch=master)](https://ci.appveyor.com/project/jfromaniello/anna)
 
 Anna is an event-driven HTTP server library built with ReactiveExtensions (Rx). Anna was inspired in [Node.js](http://nodejs.org) and [Nancy](https://github.com/NancyFx/Nancy).
 
