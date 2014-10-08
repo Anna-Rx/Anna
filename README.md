@@ -1,4 +1,4 @@
-# Anna [![Build status](https://ci.appveyor.com/api/projects/status/mw9xg6c7jamxsq3c?svg=true&branch=master)](https://ci.appveyor.com/project/jfromaniello/anna)
+# Anna [![Build status](https://ci.appveyor.com/api/projects/status/mw9xg6c7jamxsq3c?svg=true&branch=master)](https://ci.appveyor.com/project/jfromaniello/anna) [![NuGet](http://img.shields.io/nuget/v/Anna.svg?style=flat-square)](https://www.nuget.org/packages/Anna/) [![NuGet downloads](http://img.shields.io/nuget/dt/Anna.svg?style=flat-square)](https://www.nuget.org/packages/Anna/)
 
 Anna is an event-driven HTTP server library built with ReactiveExtensions (Rx). Anna was inspired in [Node.js](http://nodejs.org) and [Nancy](https://github.com/NancyFx/Nancy).
 
