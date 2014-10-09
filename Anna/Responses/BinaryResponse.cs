@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Linq;
 using Anna.Request;
@@ -9,8 +10,8 @@ namespace Anna.Responses
     {
         private readonly byte[] binary;
 
-        public BinaryResponse(RequestContext context, byte[] binary, int statusCode = 200)
-            : base(context, statusCode)
+        public BinaryResponse(RequestContext context, byte[] binary, int statusCode = 200, IDictionary<string, string> headers = null)
+            : base(context, statusCode, headers)
         {
             this.binary = binary;
         }
