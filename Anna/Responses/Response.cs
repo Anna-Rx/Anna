@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reactive.Linq;
 using Anna.Request;
-using System.Net;
 
 namespace Anna.Responses
 {
@@ -12,13 +12,21 @@ namespace Anna.Responses
     {
         private readonly HttpListenerResponse listenerResponse;
 
-        public Response(RequestContext context, int statusCode = 200)
+        public Response()
+        {
+        }
+
+        public Response(RequestContext context, int statusCode = 200, IEnumerable<KeyValuePair<string, string>> headers = null)
         {
             StatusCode = statusCode;
-            Headers = new Dictionary<string, string>{{"Content-Type", "text/html"}};
-            this.listenerResponse = context.ListenerResponse;
+            Headers = new Dictionary<string, string> { { "Content-Type", "text/html" } };
+            if (headers != null)
+                foreach (var pair in headers)
+                    Headers.Add(pair);
+
+            listenerResponse = context.ListenerResponse;
         }
-       
+
         public int StatusCode { get; set; }
 
         public IDictionary<string, string> Headers { get; set; }
@@ -48,31 +56,32 @@ namespace Anna.Responses
             listenerResponse.ContentType = Headers["Content-Type"];
             listenerResponse.StatusCode = StatusCode;
             WriteStream(listenerResponse.OutputStream)
-                        .Subscribe(s =>
-                        {
-                            try
-                            {
-                                s.Close();
-                            }
-                            catch (HttpListenerException e)
-                            {
-                                // 1229 = client closed connection.
-                                if (e.ErrorCode != 1229) throw;
-                            }
-                            finally
-                            {
-                                s.Dispose();
-                            }
-                        }, e =>
-                        {
-                            try
-                            {
-                                listenerResponse.StatusCode = 500;
-                                listenerResponse.OutputStream.Close();
-                            }
-                            catch { } //swallow exceptions
-                        });    
-            
+                .Subscribe(s =>
+                {
+                    try
+                    {
+                        s.Close();
+                    }
+                    catch (HttpListenerException e)
+                    {
+                        // 1229 = client closed connection.
+                        if (e.ErrorCode != 1229) throw;
+                    }
+                    finally
+                    {
+                        s.Dispose();
+                    }
+                }, e =>
+                {
+                    try
+                    {
+                        listenerResponse.StatusCode = 500;
+                        listenerResponse.OutputStream.Close();
+                    }
+                    catch
+                    {
+                    } //swallow exceptions
+                });
         }
     }
 }

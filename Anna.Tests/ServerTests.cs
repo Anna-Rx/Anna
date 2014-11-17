@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Anna.Responses;
 using Anna.Tests.Util;
+using AsyncHttp.Server;
 using Moq;
 using NUnit.Framework;
 using SharpTestsEx;
@@ -28,6 +30,22 @@ namespace Anna.Tests
                 Browser.ExecuteGet("http://localhost:1234")
                        .ReadAllContent()
                        .Should().Be.EqualTo("hello world");
+            }
+        }
+
+        [Test]
+        public void CanReturnArbitraryHeader()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                var headers = new Dictionary<string, string> { { "X-Something", "value" }, { "X-Another", "value again" } };
+                server.GET("/test")
+                      .Subscribe(ctx => ctx.Respond("I have some headers for you", 200, headers));
+
+                HttpWebResponse response = Browser.ExecuteGet("http://localhost:1234/test");
+                Dictionary<string, string> contentHeaders = response.Headers.ToDictionary().Select(pair => new KeyValuePair<string, string>(pair.Key, pair.Value.FirstOrDefault())).ToDictionary(pair => pair.Key, pair => pair.Value);
+                foreach (var header in headers)
+                    contentHeaders.Should().Contain(header);
             }
         }
 
@@ -252,7 +270,7 @@ namespace Anna.Tests
                 server.RAW("")
                       .Subscribe(ctx =>
                       {
-                          var mockedResponse = new Mock<Response>(ctx, 201);
+                          var mockedResponse = new Mock<Response>(ctx, 201, null);
                           mockedResponse.Setup(r => r.WriteStream(It.IsAny<Stream>()))
                                         .Returns(Observable.Throw<Stream>(new InvalidOperationException()));
                           mockedResponse.Object.Send();
