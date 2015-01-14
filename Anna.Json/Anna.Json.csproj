@@ -56,7 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IQueryableRequestContextExtensions.cs" />
+    <Compile Include="IObservableRequestContextExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestContextExtensions.cs" />
   </ItemGroup>

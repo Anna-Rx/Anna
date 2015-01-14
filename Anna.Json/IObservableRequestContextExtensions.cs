@@ -8,7 +8,7 @@ using Anna.Request;
 namespace Anna.Json
 {
     // ReSharper disable once InconsistentNaming
-    public static class IQueryableRequestContextExtensions
+    public static class IObservableRequestContextExtensions
     {
         public static IDisposable SubscribeAs<T>(this IObservable<RequestContext> queryable, Action<T> handler)
         {
