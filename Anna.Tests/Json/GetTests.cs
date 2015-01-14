@@ -27,7 +27,7 @@ namespace Anna.Tests.Json
 
                 server.POST("/Person").Subscribe(ctx =>
                                                  {
-                                                     var requestPerson = ctx.Get<PersonModel>();
+                                                     var requestPerson = ctx.GetAs<PersonModel>();
 
                                                      requestPerson.Should().Not.Be.Null();
                                                      requestPerson.Should().Be.EqualTo(person);
@@ -55,7 +55,7 @@ namespace Anna.Tests.Json
 
                 server.POST("/Person/{PersonId}").Subscribe(ctx =>
                                                             {
-                                                                var requestPerson = ctx.Get<PersonModel>();
+                                                                var requestPerson = ctx.GetAs<PersonModel>();
 
                                                                 requestPerson.Should().Not.Be.Null();
 

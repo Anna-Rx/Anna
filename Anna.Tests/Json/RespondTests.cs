@@ -27,7 +27,7 @@ namespace Anna.Tests.Json
                              };
 
                 server.GET("/")
-                      .Subscribe(ctx => ctx.Respond(person));
+                      .Subscribe(ctx => ctx.RespondAs(person));
 
                 var content = Browser.ExecuteGet("http://localhost:1234").ReadAllContent();
 
