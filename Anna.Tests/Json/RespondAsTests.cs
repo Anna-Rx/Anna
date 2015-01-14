@@ -11,10 +11,10 @@ using Anna.Json;
 
 namespace Anna.Tests.Json
 {
-    public class RespondTests
+    public class RespondAsTests
     {
         [Test]
-        public void RespondWithClass()
+        public void RespondAsWithClass()
         {
             using (var server = new HttpServer("http://*:1234/"))
             {
@@ -26,8 +26,7 @@ namespace Anna.Tests.Json
                                  PersonId = 1234
                              };
 
-                server.GET("/")
-                      .Subscribe(ctx => ctx.RespondAs(person));
+                server.GET("/").Subscribe(ctx => ctx.RespondAs(person));
 
                 var content = Browser.ExecuteGet("http://localhost:1234").ReadAllContent();
 

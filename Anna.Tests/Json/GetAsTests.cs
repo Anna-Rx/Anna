@@ -10,10 +10,10 @@ using SharpTestsEx;
 
 namespace Anna.Tests.Json
 {
-    public class GetTests
+    public class GetAsTests
     {
         [Test]
-        public void GetReturnsInstanceFromPostData()
+        public void GetAsReturnsInstanceFromPostData()
         {
             using (var server = new HttpServer("http://*:1234/"))
             {
@@ -42,7 +42,7 @@ namespace Anna.Tests.Json
         }
 
         [Test]
-        public void GetReturnsDataFromPostAndUriArguements()
+        public void GetAsReturnsDataFromPostAndUriArguements()
         {
             using (var server = new HttpServer("http://*:1234/"))
             {
