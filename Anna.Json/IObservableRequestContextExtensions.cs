@@ -21,7 +21,7 @@ namespace Anna.Json
         {
             return queryable.Subscribe(ctx =>
                                        {
-                                           var actionParameter = ctx.Get<T>();
+                                           var actionParameter = ctx.GetAs<T>();
 
                                            handler(actionParameter);
 
@@ -41,7 +41,7 @@ namespace Anna.Json
         {
             return queryable.Subscribe(ctx =>
             {
-                var actionParameter = ctx.Get<T>();
+                var actionParameter = ctx.GetAs<T>();
 
                 var returnValue = handler(actionParameter);
 
@@ -53,7 +53,7 @@ namespace Anna.Json
                 }
                 else
                 {
-                    ctx.Respond(returnValue);
+                    ctx.RespondAs(returnValue);
                 }
             });
         }

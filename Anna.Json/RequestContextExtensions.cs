@@ -10,10 +10,16 @@ namespace Anna.Json
 {
     public static class RequestContextExtensions
     {
-        public static T Get<T>(this RequestContext ctx)
+        /// <summary>
+        /// Get Request data as a particular type. UriArguements, QueryString, and POST data will be used to satisfy the model
+        /// </summary>
+        /// <typeparam name="T">type being requested</typeparam>
+        /// <param name="ctx">context</param>
+        /// <returns></returns>
+        public static T GetAs<T>(this RequestContext ctx)
         {
-            JObject values;
             var request = ctx.Request;
+            JObject values;
 
             if (request.HttpMethod == "POST")
             {
@@ -49,7 +55,15 @@ namespace Anna.Json
             return values.ToObject<T>();
         }
 
-        public static void Respond<T>(this RequestContext requestContext, T tReturn, int statusCode = 200, IDictionary<string, string> headers = null)
+        /// <summary>
+        /// Respond extension that serializes an instance using Json and responds
+        /// </summary>
+        /// <typeparam name="T">type of instance being sent</typeparam>
+        /// <param name="requestContext">request context</param>
+        /// <param name="tReturn">instance being returned</param>
+        /// <param name="statusCode">status code</param>
+        /// <param name="headers">headers for call</param>
+        public static void RespondAs<T>(this RequestContext requestContext, T tReturn, int statusCode = 200, IDictionary<string, string> headers = null)
         {
             string body = JsonConvert.SerializeObject(tReturn);
 
