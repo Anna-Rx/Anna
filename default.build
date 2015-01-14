@@ -25,14 +25,26 @@
 			XmlFileName="Anna.nuspec"
 			XPath="package/metadata/version"
 			Value="$(AssemblyVersion)"/>
+    <XmlUpdate
+      Namespace="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"
+      XmlFileName="Anna.Json.nuspec"
+      XPath="package/metadata/version"
+      Value="$(AssemblyVersion)"/>
+    <XmlUpdate
+			Namespace="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"
+			XmlFileName="Anna.Json.nuspec"
+			XPath="package/metadata/dependencies/dependency[@id='Anna']/@version"
+			Value="$(AssemblyVersion)"/>
 	</Target>
 
 	<Target Name="BuildNupkg">
 		<Exec Command="Tools\nuget.exe pack Anna.nuspec" />
+    <Exec Command="Tools\nuget.exe pack Anna.Json.nuspec" />
 	</Target>
 	
 	<Target Name="PublishNupkg">
 		<Exec Command="Tools\nuget.exe push Anna.$(AssemblyVersion).nupkg" />
+    <Exec Command="Tools\nuget.exe push Anna.Json.$(AssemblyVersion).nupkg" />
 	</Target>
   
 	<Target Name="All" DependsOnTargets="UpdateAssemblyInfos; DefaultBuild; DefineTestsAssemblies; RunTests; DefineBuildResult; CopyBuildResult; UpdateNuspec; BuildNupkg; PublishNupkg">

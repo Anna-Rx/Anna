@@ -1,9 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anna", "Anna\Anna.csproj", "{4D0919C0-8FA4-480C-8629-00EB128DDEE9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anna.Tests", "Anna.Tests\Anna.Tests.csproj", "{DF6E5228-66CA-405C-8EFF-8C919FC10B17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anna.Json", "Anna.Json\Anna.Json.csproj", "{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +39,16 @@ Global
 		{DF6E5228-66CA-405C-8EFF-8C919FC10B17}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{DF6E5228-66CA-405C-8EFF-8C919FC10B17}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DF6E5228-66CA-405C-8EFF-8C919FC10B17}.Release|x86.ActiveCfg = Release|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5071EA26-4E5F-42BA-8EF0-30B3BBBBFA01}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

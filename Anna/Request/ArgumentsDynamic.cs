@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace Anna.Request
 {
-    public class ArgumentsDynamic : DynamicObject
+    public class ArgumentsDynamic : DynamicObject, IEnumerable<KeyValuePair<string,string>>
     {
         private readonly IDictionary<string, string> args;
 
@@ -33,6 +34,21 @@ namespace Anna.Request
             string value;
             result = !args.TryGetValue(name, out value) ? null : value;
             return true;
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return args.Keys;
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return args.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
