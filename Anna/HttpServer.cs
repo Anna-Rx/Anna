@@ -16,6 +16,7 @@ namespace Anna
     {
         private readonly HttpListener listener;
         private readonly IObservable<RequestContext> stream;
+        private IDisposable subscription;
 
         //URI - METHOD
         private readonly List<Tuple<string, string>> handledRoutes 
@@ -45,7 +46,7 @@ namespace Anna
                 .Repeat().Retry()
                 .Publish().RefCount().ObserveOn(scheduler);
 
-            observableHttpContext.Subscribe(new UnhandledRouteObserver(handledRoutes));
+            subscription = observableHttpContext.Subscribe(new UnhandledRouteObserver(handledRoutes));
             return observableHttpContext;
         }
 
@@ -53,6 +54,7 @@ namespace Anna
         public void Dispose()
         {
             listener.Stop();
+            subscription.Dispose();
         }
 
         /// <summary>
