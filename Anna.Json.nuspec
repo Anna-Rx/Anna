@@ -1,22 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>Anna</id>
+    <id>Anna.Json</id>
     <version>1.0.1007</version>
     <authors>Jose Romaniello</authors>
     <owners>Jose Romaniello</owners>
     <projectUrl>https://github.com/jfromaniello/Anna</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Event-driven http library powered by Reactive Extensions. High scalability nodejs-like architecture.</description>
+    <description>Companion library for Anna that provides utility method for working with json</description>
     <tags>HttpServer Http Web nodejs</tags>
     <dependencies>
-      <dependency id="Rx-Main" version="2.1.30214.0" />
+      <dependency id="Anna" version="1.0.1007" />
+      <dependency id="Newtonsoft.Json" version="6.0.8"/>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="Anna.dll" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="Anna.Json.dll" targetFramework=".NETFramework4.0" />
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="Anna\bin\Debug\Anna.dll" target="lib\net40\Anna.dll" />
+    <file src="Anna.Json\bin\Debug\Anna.Json.dll" target="lib\net40\Anna.Json.dll" />
   </files>
 </package>
