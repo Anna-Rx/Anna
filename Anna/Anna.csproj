@@ -60,6 +60,9 @@
   <ItemGroup>
     <Compile Include="Observables\ObservableFromFile.cs" />
     <Compile Include="Request\ArgumentsDynamic.cs" />
+    <Compile Include="Request\IUrlMatcher.cs" />
+    <Compile Include="Request\UrlMatcher.cs" />
+    <Compile Include="Request\UrlTemplateMatcher.cs" />
     <Compile Include="Responses\BinaryResponse.cs" />
     <Compile Include="Responses\EmptyResponse.cs" />
     <Compile Include="Responses\StaticFileResponse.cs" />
