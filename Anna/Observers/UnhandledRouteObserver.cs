@@ -2,29 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Anna.Request;
-using Anna.Util;
 
 namespace Anna.Observers
 {
-    public class UnhandledRouteObserver : IObserver<RequestContext>
+    class UnhandledRouteObserver : IObserver<RequestContext>
     {
-        private readonly IList<Tuple<string, string>> handledRoutes;
-
-        public UnhandledRouteObserver(IList<Tuple<string,string>> handledRoutes)
+        private List<IUrlMatcher> routeMatchers;
+        
+        public UnhandledRouteObserver(List<IUrlMatcher> routeMatchers)
         {
-            this.handledRoutes = handledRoutes;
+            this.routeMatchers = routeMatchers;
         }
 
         public void OnNext(RequestContext value)
         {
-            var isHandled = handledRoutes.Any(r =>
-                                                  {
-                                                      if (!string.IsNullOrEmpty(r.Item2) && r.Item2 != value.Request.HttpMethod) return false;
-                                                      var serverPath = value.Request.Url.GetServerBaseUri();
-                                                      var uriTemplate = new UriTemplate(r.Item1);
-                                                      var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), value.Request.Url);
-                                                      return uriTemplateMatch != null;
-                                                  });
+            var isHandled = routeMatchers.Any(r => r.Matches(value));
 
             if (isHandled) return;
 

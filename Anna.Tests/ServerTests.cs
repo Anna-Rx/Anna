@@ -34,6 +34,20 @@ namespace Anna.Tests
         }
 
         [Test]
+        public void CanUseAsteriskInUrl()
+        {
+            using (var server = new HttpServer("http://*:1234/"))
+            {
+                server.OnExactPathAndMethod("/wildcarded-*","GET")
+                      .Subscribe(ctx => ctx.Respond("hello world"));
+
+                Browser.ExecuteGet("http://localhost:1234/wildcarded-*")
+                       .ReadAllContent()
+                       .Should().Be.EqualTo("hello world");
+            }
+        }
+
+        [Test]
         public void CanReturnArbitraryHeader()
         {
             using (var server = new HttpServer("http://*:1234/"))

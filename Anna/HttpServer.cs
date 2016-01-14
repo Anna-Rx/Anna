@@ -5,7 +5,6 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Anna.Observers;
 using Anna.Request;
-using Anna.Util;
 
 namespace Anna
 {
@@ -18,9 +17,7 @@ namespace Anna
         private readonly IObservable<RequestContext> stream;
         private IDisposable subscription;
 
-        //URI - METHOD
-        private readonly List<Tuple<string, string>> handledRoutes 
-            = new List<Tuple<string, string>>();
+        private readonly List<IUrlMatcher> urlMatchers = new List<IUrlMatcher>(); 
         private readonly IScheduler scheduler;
 
         /// <summary>
@@ -46,7 +43,7 @@ namespace Anna
                 .Repeat().Retry()
                 .Publish().RefCount().ObserveOn(scheduler);
 
-            subscription = observableHttpContext.Subscribe(new UnhandledRouteObserver(handledRoutes));
+            subscription = observableHttpContext.Subscribe(new UnhandledRouteObserver(urlMatchers));
             return observableHttpContext;
         }
 
@@ -145,28 +142,35 @@ namespace Anna
         /// <returns>An <c>IObservable</c> to which you should <c>Subscribe()</c></returns>
         public IObservable<RequestContext> OnUriAndMethod(string uri, string method)
         {
-            handledRoutes.Add(new Tuple<string, string>(uri, method));
+            return ObservableForUrl(new UrlTemplateMatcher(uri,method));
+        }
 
-            var uriTemplate = new UriTemplate(uri);
-            return Observable.Create<RequestContext>(obs => 
-                stream.Subscribe(ctx => OnUriAndMethodHandler(ctx, method, uriTemplate, obs), 
+        /// <summary>
+        /// Returns an observable sequence of HTTP requests that conform to the exact URI provided, relative to the server's prefix.
+        /// </summary>
+        /// <param name="uri">The literal URI</param>
+        /// <param name="method">The method by which the HTTP request should be called. Pass in upper case. Pass <c>null</c> for any method</param>
+        /// <returns>An <c>IObservable</c> to which you should <c>Subscribe()</c></returns>
+        public IObservable<RequestContext> OnExactPathAndMethod(string uri, string method)
+        {
+            return ObservableForUrl(new UrlMatcher(uri, method));
+        }
+
+        private IObservable<RequestContext> ObservableForUrl(IUrlMatcher matcher)
+        {
+            urlMatchers.Add(matcher);
+
+            return Observable.Create<RequestContext>(obs =>
+                stream.Subscribe(ctx => OnUriAndMethodHandler(ctx, matcher, obs),
                                  obs.OnError, obs.OnCompleted));
         }
 
-        private static void OnUriAndMethodHandler(
-                RequestContext ctx, 
-                string method, 
-                UriTemplate uriTemplate, 
-                IObserver<RequestContext> obs)
+        private static void OnUriAndMethodHandler(RequestContext ctx, IUrlMatcher matcher, IObserver<RequestContext> obs)
         {
-            if (!string.IsNullOrEmpty(method) && ctx.Request.HttpMethod != method) return;
-
-            var serverPath = ctx.Request.Url.GetServerBaseUri();
-            var uriTemplateMatch = uriTemplate.Match(new Uri(serverPath), ctx.Request.Url);
-            if (uriTemplateMatch == null) return;
-
-            ctx.Request.LoadArguments(uriTemplateMatch.BoundVariables);
-            obs.OnNext(ctx);
+            if (!matcher.Matches(ctx)) return;
+            
+            obs.OnNext(ctx);            
         }
+        
     }
 }
