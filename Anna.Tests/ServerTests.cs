@@ -163,7 +163,7 @@ namespace Anna.Tests
                       .Subscribe(ctx => ctx.StaticFileResponse(@"samples\example_1.txt").Send());
 
                 Browser.ExecuteGet("http://localhost:1234")
-                       .ReadAllContent().Replace(Environment.NewLine, " ")
+                       .ReadAllContent().Replace("\r\n", " ").Replace("\n", " ")
                        .Should().Contain(string.Join(" ", Enumerable.Range(1, 9)));
             }
         }
