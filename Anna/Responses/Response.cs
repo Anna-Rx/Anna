@@ -22,7 +22,7 @@ namespace Anna.Responses
             Headers = new Dictionary<string, string> { { "Content-Type", "text/html" } };
             if (headers != null)
                 foreach (var pair in headers)
-                    Headers.Add(pair);
+                    Headers[pair.Key] = pair.Value;
 
             listenerResponse = context.ListenerResponse;
         }
